@@ -1,25 +1,77 @@
+import datetime as dt
+import json
 
 
 
-class event:
-    def __init__(self, name_event, date_event, link_event=None):
-        self.name_event = name_event
-        self.date_event = date_event
-        self.link_event = link_event
+class Event:
+    week = ['понедельник', 'вторник', 'среда', 'четверг', 'суббота', 'воскресенье']
 
-class busy:
-    def __init__(self, id_user):
-        self.id_user = id_user
+    def encode_time(t):
+        temp = t.split(":")
+        return int(temp[0]) * 60 + int(temp[1])
+
+    def time_interval(t1, t2):
+        print(t1.time, t2.time)
+        t1_ = Event.encode_time(t1.time) + t1.duration
+        t2_ = Event.encode_time(t2.time)
+        return abs(t2_ - t1_)
+
+    def __init__(self, name, date, time, duration = 60, link=None, period=[], comment=None):
+        self.name = name
+        self.date = date
+        self.time = time
+        self.link = link
+        self.duration = duration
+        self.period = period
+        self.comment = comment
+
+    def __str__(self):
+        return str(self.__dict__)
+
+
+
+class Busy:
+    def __init__(self):
         self.events = []
 
     def add_event(self, event):
-        self.events.add(event)
+        self.events.append(event)
 
-    def get_today(self):
-        if len(self.events) == 0:
+    def filter_day(self, day):
+        rez = []
+        for e in self.events:
+            date_busy = dt.datetime.strptime(e.date, '%Y-%m-%d').date()
+            date_user = day.toPyDate()
+            if date_busy == date_user:
+                rez.append(e)
+        rez.sort(key=(lambda x: x.time))
+        return rez
+
+    def get_today(self, day=None):
+        if day is None:
+            day = dt.date.today()
+        temp_events = self.filter_day(day)
+        if len(temp_events) == 0:
             return "Прости брат, ты свободен как Куба)"
         else:
-            return "Всего событий " + str(len(self.events))
+            return temp_events
+
+    def encode_json(self):
+        return [i.__dict__ for i in self.events]
 
 
 
+    def save(self):
+        with open("calendar.json", "w", encoding="utf-8") as file:
+            #json.dump(self, file, default=encode_json)
+            json.dump(self.encode_json(), file)
+
+    def load(self):
+        with open("calendar.json", "r", encoding="utf-8") as file:
+            #json.dump(self, file, default=encode_json)
+            temp = json.load(file)
+            self.events = [Event(t['name'], t['date'], t['time'], t['duration'], t['link'], t['period'], t['comment']) for t in temp]
+            #print(temp)
+
+    def __str__(self):
+        return "\nВсе события:\n"+"\n".join([str(e) for e in self.events])
