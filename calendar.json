@@ -1,4 +1,4 @@
 [{"name": "Универ", "date": "2021-12-25", "time": "12:25", "duration": 60,"link": "nosu.ru", "period": [1, 2], "comment": "Вика"}, 
-{"name": "Дедлайн проверок Яндекс", "date": "2021-01-11", "time": "10:00", "duration": 60, "link": null, "period": [], "comment": null}, 
+{"name": "Дедлайн проверок Яндекс", "date": "2021-01-11", "time": "10:00", "duration": 160, "link": null, "period": [], "comment": null}, 
 {"name": "Яндекс проект QT", "date": "2021-01-11", "time": "09:00", "duration": 60, "link": null, "period": [], "comment": null}, 
-{"name": "Яндекс проект QT", "date": "2021-01-11", "time": "15:00", "duration": 60, "link": null, "period": [], "comment": null}]
+{"name": "Яндекс проект QT", "date": "2021-01-05", "time": "15:00", "duration": 60, "link": null, "period": [], "comment": null}]

@@ -103,8 +103,8 @@ class Ui_MainWindow(object):
         frame.setLayout(self.panelEvents)
         #frame.setStyleSheet("background-color: cyan;")
         frame.setContentsMargins(0, 0, 0, 0)
-        frame.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed))
-        # ширина слота в один час
+        frame.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Ignored))
+        # ширина слота в один минуту
         self.oneMinSlot = (325 - 66) / (10 * 60)
 
     def new_event(self, event):
@@ -141,13 +141,28 @@ class Ui_MainWindow(object):
 
         return oneEventFrame
 
+    def clearLayoutEvent(self, eventLayout):
+        frame = eventLayout.widget().findChildren(type(QLabel()))
+        frame[0].deleteLater()
+        frame[1].deleteLater()
+        eventLayout.widget().deleteLater()
+
+    def clearPanelEvents(self):
+        while self.panelEvents.count():
+            child = self.panelEvents.takeAt(0)
+            if isinstance(child, QtWidgets.QWidgetItem):
+                self.clearLayoutEvent(child)
+            self.panelEvents.removeItem(child)
+
     def add_events(self, events):
+        self.clearPanelEvents()
+        if len(events) == 0:
+            return
         #9:00 - это начало таблицы времен
         begin_event = schedule_class.Event("", "", time="09:00", duration=0)
         for i in range(len(events)):
 
             self.add_space_widget(begin_event, events[i])
-            print(i)
             event_widget = self.new_event(events[i])
             self.panelEvents.addWidget(event_widget)
 
@@ -162,7 +177,7 @@ class Ui_MainWindow(object):
         heightSlotSpace = int(dt * self.oneMinSlot)
         spacerItem = QSpacerItem(20, heightSlotSpace)
         self.panelEvents.addSpacerItem(spacerItem)
-        print(dt, "пустота = ",heightSlotSpace)
+        #print(dt, "пустота = ",heightSlotSpace)
 
 
     def retranslateUi(self, MainWindow):

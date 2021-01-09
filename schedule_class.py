@@ -11,7 +11,7 @@ class Event:
         return int(temp[0]) * 60 + int(temp[1])
 
     def time_interval(t1, t2):
-        print(t1.time, t2.time)
+        #print(t1.time, t2.time)
         t1_ = Event.encode_time(t1.time) + t1.duration
         t2_ = Event.encode_time(t2.time)
         return abs(t2_ - t1_)
@@ -51,10 +51,7 @@ class Busy:
         if day is None:
             day = dt.date.today()
         temp_events = self.filter_day(day)
-        if len(temp_events) == 0:
-            return "Прости брат, ты свободен как Куба)"
-        else:
-            return temp_events
+        return temp_events
 
     def encode_json(self):
         return [i.__dict__ for i in self.events]
