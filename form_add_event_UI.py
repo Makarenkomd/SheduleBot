@@ -9,23 +9,31 @@
 
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtWidgets import QWidget
 
 
-class Ui_Dialog(object):
-    def setupUi(self, Dialog):
-        Dialog.setObjectName("Dialog")
-        Dialog.resize(597, 300)
-        self.buttonBox = QtWidgets.QDialogButtonBox(Dialog)
+class Ui_Dialog(QWidget):
+    def __init__(self):
+        super().__init__()
+
+        self.setupUi()
+
+    def setupUi(self):
+        self.setObjectName("Dialog")
+        self.resize(597, 300)
+        self.buttonBox = QtWidgets.QDialogButtonBox(self)
+
         self.buttonBox.setGeometry(QtCore.QRect(30, 240, 341, 32))
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName("buttonBox")
-        self.formLayoutWidget = QtWidgets.QWidget(Dialog)
+        self.formLayoutWidget = QtWidgets.QWidget(self)
         self.formLayoutWidget.setGeometry(QtCore.QRect(10, 30, 251, 161))
         self.formLayoutWidget.setObjectName("formLayoutWidget")
         self.formLayout = QtWidgets.QFormLayout(self.formLayoutWidget)
         self.formLayout.setContentsMargins(0, 0, 0, 0)
         self.formLayout.setObjectName("formLayout")
+
         self.Label = QtWidgets.QLabel(self.formLayoutWidget)
         self.Label.setObjectName("Label")
         self.formLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.Label)
@@ -56,14 +64,15 @@ class Ui_Dialog(object):
         self.LineEditComment = QtWidgets.QLineEdit(self.formLayoutWidget)
         self.LineEditComment.setObjectName("LineEditComment")
         self.formLayout.setWidget(4, QtWidgets.QFormLayout.FieldRole, self.LineEditComment)
-        self.calendarWidget = QtWidgets.QCalendarWidget(Dialog)
+        self.calendarWidget = QtWidgets.QCalendarWidget(self)
         self.calendarWidget.setGeometry(QtCore.QRect(270, 10, 312, 183))
         self.calendarWidget.setObjectName("calendarWidget")
 
-        self.retranslateUi(Dialog)
-        self.buttonBox.accepted.connect(Dialog.accept)
-        self.buttonBox.rejected.connect(Dialog.reject)
-        QtCore.QMetaObject.connectSlotsByName(Dialog)
+        self.retranslateUi(self)
+
+        #self.buttonBox.accepted.connect(self.accept)
+        #self.buttonBox.rejected.connect(self.reject)
+        QtCore.QMetaObject.connectSlotsByName(self)
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate

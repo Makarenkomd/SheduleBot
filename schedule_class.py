@@ -14,7 +14,8 @@ class Event:
         #print(t1.time, t2.time)
         t1_ = Event.encode_time(t1.time) + t1.duration
         t2_ = Event.encode_time(t2.time)
-        return abs(t2_ - t1_)
+        return max(0, t2_ - t1_)
+
 
     def __init__(self, name, date, time, duration = 60, link=None, period=[], comment=None):
         self.name = name

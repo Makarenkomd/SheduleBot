@@ -7,11 +7,32 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PyQt5.QtGui import QCursor
 from PyQt5.QtWidgets import QFrame, QVBoxLayout, QHBoxLayout, QLabel, QSpacerItem
 import schedule_class
+import form_add_event_UI
+
+class Event_Frame(QFrame):
+    def __init__(self, parent, table):
+        super().__init__(parent)
+        self.setGeometry(33, 66, Ui_MainWindow.widthSlot, 325)
+        self.setFrameStyle(QFrame.Box)
+        # frame.setStyleSheet("background-color: cyan;")
+        self.table = table
+        self.setContentsMargins(0, 0, 0, 0)
+        self.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Ignored))
+
+    def mousePressEvent(self, event):
+        index = self.table.indexAt(event.pos())
+        self.table.setCurrentCell(index.row(), 0)
+
+
 
 class Ui_MainWindow(object):
     widthSlot = 280
+
+
+
     def setupUi(self, MainWindow):
         self.MainWindow = MainWindow
         MainWindow.setObjectName("MainWindow")
@@ -41,7 +62,10 @@ class Ui_MainWindow(object):
         self.tableWidget.horizontalHeader().setDefaultSectionSize(280)
         self.tableWidget.horizontalHeader().setMinimumSectionSize(10)
         self.tableWidget.verticalHeader().setDefaultSectionSize(25)
+        self.tableWidget.itemChanged.connect(self.show_form_add_event)
         self.tableWidget.itemSelectionChanged.connect(self.show_form_add_event)
+        #self.tableWidget.cellClicked.connect(show_form_add_event)
+        #self.tableWidget.mousePressEvent = show_form_add_event
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -53,14 +77,18 @@ class Ui_MainWindow(object):
         self.statusbar = QtWidgets.QStatusBar(MainWindow)
         self.statusbar.setObjectName("statusbar")
         MainWindow.setStatusBar(self.statusbar)
-        self.action = QtWidgets.QAction(MainWindow)
-        self.action.setObjectName("action")
-        self.action_2 = QtWidgets.QAction(MainWindow)
-        self.action_2.setObjectName("action_2")
+
+        self.actionAddHand = QtWidgets.QAction(MainWindow)
+        self.actionAddHand.setObjectName("actionAddHand")
+
+        self.actionAddText = QtWidgets.QAction(MainWindow)
+        self.actionAddText.setObjectName("actionAddText")
+        self.actionAddHand.triggered.connect(self.show_form_add_event)
+
         self.action_3 = QtWidgets.QAction(MainWindow)
         self.action_3.setObjectName("action_3")
-        self.menu.addAction(self.action)
-        self.menu.addAction(self.action_2)
+        self.menu.addAction(self.actionAddHand)
+        self.menu.addAction(self.actionAddText)
         self.menu.addAction(self.action_3)
         self.menubar.addAction(self.menu.menuAction())
 
@@ -73,70 +101,101 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
         #Frame для событий втечении дня
-        frame = QFrame(self)
-        #frame.setGeometry(self.tableWidget.x() + self.tableWidget.verticalHeaderItem(0), self.tableWidget.y(), self.tableWidget.rect().width()                  self.tableWidget.rect().height())
-        # frame.setMinimumSize(self.tableWidget.rect().width(), self.tableWidget.rect().height() - self.tableWidget.verticalHeader().width())
-        frame.setGeometry(33, 66, Ui_MainWindow.widthSlot, 325)
-        frame.setFrameStyle(QFrame.Box)
+        frame = Event_Frame(self, self.tableWidget)
         frame.setLayout(self.panelEvents)
-        #frame.setStyleSheet("background-color: cyan;")
-        frame.setContentsMargins(0, 0, 0, 0)
-        frame.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Ignored))
-        # ширина слота в одину минуту
+        # frame = QFrame(self)
+        # #frame.setGeometry(self.tableWidget.x() + self.tableWidget.verticalHeaderItem(0), self.tableWidget.y(), self.tableWidget.rect().width()                  self.tableWidget.rect().height())
+        # # frame.setMinimumSize(self.tableWidget.rect().width(), self.tableWidget.rect().height() - self.tableWidget.verticalHeader().width())
+        # frame.setGeometry(33, 66, Ui_MainWindow.widthSlot, 325)
+        # frame.setFrameStyle(QFrame.Box)
+        # frame.setLayout(self.panelEvents)
+        # #frame.setStyleSheet("background-color: cyan;")
+        # frame.setContentsMargins(0, 0, 0, 0)
+        # frame.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Ignored))
+        # #frame.mousePressEvent = show_form_add_event
+        # # # ширина слота в одину минуту
         self.oneMinSlot = (325 - 66) / (10 * 60)
 
     def show_form_add_event(self):
-        print("!!!")
+        #print(item)
+        self.form = form_add_event_UI.Ui_Dialog()
+        self.form.show()
 
     def new_event(self, event):
 
         oneEventFrame = QFrame()
+        heightSlot = event.duration * self.oneMinSlot
         #oneEventFrame.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Fixed))
-        oneEventFrame.resize(Ui_MainWindow.widthSlot, event.duration * self.oneMinSlot)
+        #oneEventFrame.resize(Ui_MainWindow.widthSlot, heightSlot)
+        oneEventFrame.setFixedHeight(heightSlot)
         oneEventFrame.setContentsMargins(0, 0, 0, 0)
-        color = QtGui.QColor(233, 10, 150)
-        oneEventFrame.setStyleSheet("background-color: blue;")
+        oneEventFrame.setStyleSheet("background-color: rgb(2, 116, 205); border-bottom: 1px solid rgb(128, 128, 255);")
+        #color = QtGui.QColor(233, 10, 150)
+
 
         oneEventLayout = QHBoxLayout()
         oneEventLayout.setContentsMargins(0, 0, 0, 0)
         oneEventLayout.setObjectName("oneEventLayout")
         oneEventFrame.setLayout(oneEventLayout)
-
+        oneEventLayout.setSpacing(0)
 
         labelNameEvent = QLabel()
-        #labelNameEvent.setToolTipDuration(10)
+        labelNameEvent.setToolTipDuration(10)
         labelNameEvent.setObjectName("labelNameEvent")
-        labelNameEvent.setText(event.time + " " + event.name)
-        labelNameEvent.setAutoFillBackground(True)
-        labelNameEvent.resize(Ui_MainWindow.widthSlot, oneEventFrame.height())
-        oneEventLayout.addWidget(labelNameEvent)
+        #labelNameEvent.setText(event.time + " " + event.name)
 
-        labelLinkImg = QLabel()
-        labelLinkImg.setMouseTracking(False)
-        labelLinkImg.setLayoutDirection(QtCore.Qt.RightToLeft)
-        labelLinkImg.setText("")
-        labelLinkImg.setPixmap(QtGui.QPixmap("gorizont.png"))
-        #self.label_img.setOpenExternalLinks(True)
-        #self.label_img.setObjectName("label_img")
-        oneEventLayout.addWidget(labelLinkImg)
+        labelNameEvent.setAutoFillBackground(True)
+        labelNameEvent.setFixedHeight(heightSlot)
+        if event.link is not None:
+            link = f'<a href="{event.link}">event.time + " " + event.name</a>'
+        else:
+            link = event.time + " " + event.name
+        print(link)
+        labelNameEvent.setText(link)
+        labelNameEvent.setOpenExternalLinks(True)
+        labelNameEvent.setStyleSheet("color: white;")
+        sheet = "a { text-decoration: underline; color: white }"
+        #labelNameEvent.setDefaultStyleSheet(sheet)
+        #labelNameEvent.resize(Ui_MainWindow.widthSlot, oneEventFrame.height())
+        oneEventLayout.addWidget(labelNameEvent)
+        print(event.link)
+        if event.link is not None:
+
+            labelLinkImg = QLabel(link)
+            labelLinkImg.setOpenExternalLinks(True)
+            labelLinkImg.setMouseTracking(False)
+            labelLinkImg.setLayoutDirection(QtCore.Qt.RightToLeft)
+            labelLinkImg.setText("")
+            labelLinkImg.setPixmap(QtGui.QPixmap("linkk.png"))
+            labelLinkImg.setCursor(QCursor(QtCore.Qt.PointingHandCursor))
+            #self.label_img.setOpenExternalLinks(True)
+            #self.label_img.setObjectName("label_img")
+            oneEventLayout.addWidget(labelLinkImg)
 
         return oneEventFrame
 
     def clearLayoutEvent(self, eventLayout):
-        frame = eventLayout.widget().findChildren(type(QLabel()))
-        frame[0].deleteLater()
-        frame[1].deleteLater()
+        frame_temp = eventLayout.widget().findChildren(type(QLabel()))
+        print(f"Удалить событие {frame_temp[0].text()}")
+        frame_temp[0].deleteLater()
+        if len(frame_temp) > 1:
+            frame_temp[1].deleteLater()
         eventLayout.widget().deleteLater()
 
     def clearPanelEvents(self):
+        print(f"Удалить {self.panelEvents.count()} слотов")
         while self.panelEvents.count():
             child = self.panelEvents.takeAt(0)
             if isinstance(child, QtWidgets.QWidgetItem):
                 self.clearLayoutEvent(child)
             self.panelEvents.removeItem(child)
+            print(type(child))
+
 
     def add_events(self, events):
+
         self.clearPanelEvents()
+        print(f"Добавить {len(events)} событий")
         if len(events) == 0:
             return
         #9:00 - это начало таблицы времен
@@ -172,7 +231,7 @@ class Ui_MainWindow(object):
             item.setText(_translate("MainWindow", str(8+i)+":00"))
 
         self.menu.setTitle(_translate("MainWindow", "Добавить событие"))
-        self.action.setText(_translate("MainWindow", "Руками"))
-        self.action_2.setText(_translate("MainWindow", "Из текста"))
+        self.actionAddHand.setText(_translate("MainWindow", "Руками"))
+        self.actionAddText.setText(_translate("MainWindow", "Из текста"))
         self.action_3.setText(_translate("MainWindow", "Из календаря"))
 
