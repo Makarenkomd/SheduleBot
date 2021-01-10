@@ -10,17 +10,20 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QWidget
+import schedule_class
 
 
 class Ui_Dialog(QWidget):
-    def __init__(self):
+    def __init__(self, date, time, calendar):
         super().__init__()
-
         self.setupUi()
+        self.calendar = calendar
+        self.calendarWidget.setSelectedDate(date)
+        self.TimeEdit.setTime(QtCore.QTime(time,0))
 
     def setupUi(self):
         self.setObjectName("Dialog")
-        self.resize(597, 300)
+        self.setFixedSize(597, 300)
         self.buttonBox = QtWidgets.QDialogButtonBox(self)
 
         self.buttonBox.setGeometry(QtCore.QRect(30, 240, 341, 32))
@@ -39,6 +42,7 @@ class Ui_Dialog(QWidget):
         self.formLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.Label)
         self.LineEditEvent = QtWidgets.QLineEdit(self.formLayoutWidget)
         self.LineEditEvent.setObjectName("LineEditEvent")
+        self.LineEditEvent.setFocus()
         self.formLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.LineEditEvent)
         self.Label_2 = QtWidgets.QLabel(self.formLayoutWidget)
         self.Label_2.setObjectName("Label_2")
@@ -51,6 +55,7 @@ class Ui_Dialog(QWidget):
         self.formLayout.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.Label_3)
         self.TimeEditDuration = QtWidgets.QTimeEdit(self.formLayoutWidget)
         self.TimeEditDuration.setObjectName("TimeEditDuration")
+        self.TimeEditDuration.setTime(QtCore.QTime(1,0))
         self.formLayout.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.TimeEditDuration)
         self.Label_4 = QtWidgets.QLabel(self.formLayoutWidget)
         self.Label_4.setObjectName("Label_4")
@@ -70,9 +75,33 @@ class Ui_Dialog(QWidget):
 
         self.retranslateUi(self)
 
-        #self.buttonBox.accepted.connect(self.accept)
-        #self.buttonBox.rejected.connect(self.reject)
+        self.buttonBox.accepted.connect(self.accept)
+        self.buttonBox.rejected.connect(self.reject)
         QtCore.QMetaObject.connectSlotsByName(self)
+
+    def accept(self):
+        #event = schedule_class.Event(self.LineEditEvent.text(), self.calendarWidget.selectedDate(),
+        #                             self.TimeEdit.text(), self.TimeEditDuration.text(),
+        #                             self.LineEditComment.text, self.LineEditComment)
+        if self.LineEditEvent.text() != "":
+            date = self.calendarWidget.selectedDate().toString("yyyy-MM-dd")
+            time = self.TimeEdit.text()
+            duration = schedule_class.Event.encode_time(self.TimeEditDuration.text())
+            link = self.LineEditLink.text()
+            event = schedule_class.Event(self.LineEditEvent.text(), date, time, duration, link, self.LineEditComment.text())
+
+            self.calendar.add_event(event)
+            print(123)
+            self.calendar.save()
+            self.close()
+        else:
+            msg = QtWidgets.QMessageBox()
+            msg.setText("Задайте название события")
+            msg.setWindowTitle("Error")
+            msg.exec_()
+
+    def reject(self):
+        self.close()
 
     def retranslateUi(self, Dialog):
         _translate = QtCore.QCoreApplication.translate

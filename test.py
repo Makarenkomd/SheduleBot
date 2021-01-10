@@ -1,5 +1,5 @@
 from schedule_class import Busy, Event
-from form_day_UI import  Ui_MainWindow
+from form_day_UI import Ui_MainWindow
 from PyQt5.QtWidgets import QApplication, QMainWindow
 from PyQt5.QtGui import  QColor
 
@@ -14,13 +14,8 @@ class FormDay(QMainWindow, Ui_MainWindow):
         self.calendar.load()
 
     def chooseDay(self, d):
-        #print(d)
-        #print(self.calendarWidget.dateTextFormat())
         self.add_events(self.calendar.get_today(d))
 
-        #print(self.tableWidget.rowCount())
-        #print(self.tableWidget.columnCount())
-        #self.tableWidget.item(2, 0).setText("1")
 
 app = QApplication(sys.argv)
 form = FormDay()

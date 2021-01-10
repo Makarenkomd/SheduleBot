@@ -27,18 +27,16 @@ class Event_Frame(QFrame):
         self.table.setCurrentCell(index.row(), 0)
 
 
-
 class Ui_MainWindow(object):
     widthSlot = 280
-
-
 
     def setupUi(self, MainWindow):
         self.MainWindow = MainWindow
         MainWindow.setObjectName("MainWindow")
-        MainWindow.resize(519, 599)
+        MainWindow.setFixedSize(315, 600)
         self.centralwidget = QtWidgets.QWidget(MainWindow)
         self.centralwidget.setObjectName("centralwidget")
+
         self.calendarWidget = QtWidgets.QCalendarWidget(self.centralwidget)
         self.calendarWidget.setGeometry(QtCore.QRect(0, 370, 312, 183))
         self.calendarWidget.setObjectName("calendarWidget")
@@ -62,10 +60,8 @@ class Ui_MainWindow(object):
         self.tableWidget.horizontalHeader().setDefaultSectionSize(280)
         self.tableWidget.horizontalHeader().setMinimumSectionSize(10)
         self.tableWidget.verticalHeader().setDefaultSectionSize(25)
-        self.tableWidget.itemChanged.connect(self.show_form_add_event)
         self.tableWidget.itemSelectionChanged.connect(self.show_form_add_event)
-        #self.tableWidget.cellClicked.connect(show_form_add_event)
-        #self.tableWidget.mousePressEvent = show_form_add_event
+
 
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(MainWindow)
@@ -103,22 +99,17 @@ class Ui_MainWindow(object):
         #Frame для событий втечении дня
         frame = Event_Frame(self, self.tableWidget)
         frame.setLayout(self.panelEvents)
-        # frame = QFrame(self)
-        # #frame.setGeometry(self.tableWidget.x() + self.tableWidget.verticalHeaderItem(0), self.tableWidget.y(), self.tableWidget.rect().width()                  self.tableWidget.rect().height())
-        # # frame.setMinimumSize(self.tableWidget.rect().width(), self.tableWidget.rect().height() - self.tableWidget.verticalHeader().width())
-        # frame.setGeometry(33, 66, Ui_MainWindow.widthSlot, 325)
-        # frame.setFrameStyle(QFrame.Box)
-        # frame.setLayout(self.panelEvents)
-        # #frame.setStyleSheet("background-color: cyan;")
-        # frame.setContentsMargins(0, 0, 0, 0)
-        # frame.setSizePolicy(QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Ignored))
-        # #frame.mousePressEvent = show_form_add_event
+
         # # # ширина слота в одину минуту
         self.oneMinSlot = (325 - 66) / (10 * 60)
 
     def show_form_add_event(self):
+        time = self.tableWidget.currentRow() + 9
+        date = self.calendarWidget.selectedDate()
+        print(date, time)
         #print(item)
-        self.form = form_add_event_UI.Ui_Dialog()
+        # передать дату и время
+        self.form = form_add_event_UI.Ui_Dialog(date, time, self.calendar)
         self.form.show()
 
     def new_event(self, event):

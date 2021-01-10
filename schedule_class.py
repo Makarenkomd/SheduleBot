@@ -17,7 +17,7 @@ class Event:
         return max(0, t2_ - t1_)
 
 
-    def __init__(self, name, date, time, duration = 60, link=None, period=[], comment=None):
+    def __init__(self, name, date, time, duration = 60, link=None, comment=None, period=[]):
         self.name = name
         self.date = date
         self.time = time
@@ -60,16 +60,22 @@ class Busy:
 
 
     def save(self):
-        with open("calendar.json", "w", encoding="utf-8") as file:
-            #json.dump(self, file, default=encode_json)
-            json.dump(self.encode_json(), file)
+        try:
+            with open("calendar.json", "w", encoding="utf-8") as file:
+                #json.dump(self, file, default=encode_json)
+                json.dump(self.encode_json(), file)
+        except:
+            print("Не удалось записать в файл")
 
     def load(self):
-        with open("calendar.json", "r", encoding="utf-8") as file:
-            #json.dump(self, file, default=encode_json)
-            temp = json.load(file)
-            self.events = [Event(t['name'], t['date'], t['time'], t['duration'], t['link'], t['period'], t['comment']) for t in temp]
-            #print(temp)
+        try:
+            with open("calendar.json", "r", encoding="utf-8") as file:
+                #json.dump(self, file, default=encode_json)
+                temp = json.load(file)
+                self.events = [Event(t['name'], t['date'], t['time'], t['duration'], t['link'], t['comment'], t['period']) for t in temp]
+                #print(temp)
+        except:
+            print("Не удалось считать из файла")
 
     def __str__(self):
         return "\nВсе события:\n"+"\n".join([str(e) for e in self.events])
